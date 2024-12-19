@@ -1,0 +1,8 @@
+//This is a Kusto script do this via Azure Resource Graph Explorer.
+
+Resources
+| where type has "microsoft.compute/disks"
+| extend diskState = tostring(properties.diskState)
+| where managedBy == ""
+or diskState == 'Unattached'
+| project id, diskState, resourceGroup, location, subscriptionId

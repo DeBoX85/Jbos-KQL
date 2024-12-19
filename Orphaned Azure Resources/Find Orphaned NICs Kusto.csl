@@ -1,0 +1,7 @@
+//Find Orphaned NICs - his is a Kusto script do this via Azure Resource Graph Explorer.
+
+Resources
+| where type has "microsoft.network/networkinterfaces"
+| where "{nicWithPrivateEndpoints}" !has id
+| where properties !has 'virtualmachine'
+| project id, resourceGroup, location, subscriptionId
