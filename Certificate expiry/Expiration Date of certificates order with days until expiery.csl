@@ -1,0 +1,8 @@
+resources
+| where type == "microsoft.web/certificates"
+| extend ExpirationDate = todatetime(properties.expirationDate)
+| extend DaysUntilExpiration = datetime_diff("day", ExpirationDate, now())
+| project DaysUntilExpiration, ExpirationDate, resourceGroup, name, subscriptionId, properties.expirationDate, properties.thumbprint, properties.subjectName, properties.issuer
+| where ExpirationDate < now() + 60d
+| order by DaysUntilExpiration
+
