@@ -1,0 +1,23 @@
+//**per computer**
+// For data from nodes hosted in Azure, you can get the size of ingested data **per computer**,
+// use the _ResourceId property, which provides the full path to the resource:
+
+find where TimeGenerated > ago(24h) project _ResourceId, _BilledSize, _IsBillable
+| where _IsBillable == true //optional
+| summarize BillableDataBytes = sum(_BilledSize) by _ResourceId | sort by BillableDataBytes nulls last
+
+
+//**Per Azure subscription** 
+//For data from nodes hosted in Azure, you can get the size of ingested data per **Azure subscription** by using the _SubscriptionId property as:
+
+find where TimeGenerated > ago(24h) project _BilledSize, _IsBillable, _SubscriptionId
+| where _IsBillable == true 
+| summarize BillableDataBytes = sum(_BilledSize) by _SubscriptionId | sort by BillableDataBytes nulls last
+
+//**per resource group**
+//To get data volume by **resource group**, you can parse _ResourceId:
+find where TimeGenerated > ago(24h) project _ResourceId, _BilledSize, _IsBillable
+| where _IsBillable == true 
+| summarize BillableDataBytes = sum(_BilledSize) by _ResourceId
+| extend resourceGroup = tostring(split(_ResourceId, "/")[4] )
+| summarize BillableDataBytes = sum(BillableDataBytes) by resourceGroup | sort by BillableDataBytes nulls last

@@ -1,0 +1,20 @@
+AzureMetrics  This is related to App service plans!
+
+AzureMetrics 
+| where TimeGenerated > ago(48h) 
+| sort by ResourceProvider
+| summarize by Resource, ResourceProvider
+
+//OR just the count
+
+//The get a count of nodes sending data in the last 24 hours, use this query:
+// NOTE MIGHT BE FAULTY
+
+find where TimeGenerated > ago(24h) project Computer
+| extend computerName = tolower(tostring(split(Computer, '.')[0]))
+| where computerName != ""
+| summarize nodes = dcount(computerName)
+
+
+//IF THESE DON'T SHOW ANYTHING TRY THE OTHER SCRIPT(s)
+//"LA query datacontent , per computer,RG or Sub - Both billable and not" <-- script same folder
